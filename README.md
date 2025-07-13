@@ -102,6 +102,7 @@ Use Railway, PlanetScale, or local MySQL. Add the following to main-app/.env:
 
 ```bash
 MYSQL_HOST=your-db-host
+MYSQL_PORT=your-db-port
 MYSQL_USER=your-user
 MYSQL_PASS=your-password
 MYSQL_DB=posts
