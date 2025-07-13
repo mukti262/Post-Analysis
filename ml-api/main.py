@@ -3,12 +3,14 @@ from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+from fastapi.requests import Request
 
 app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # set to ["http://localhost:3000"] for Next.js
+    allow_origins=["https://post-analysis-beta.vercel.app"],  # set to ["http://localhost:3000"] for Next.js
     allow_credentials=True,
     allow_methods=["*"], 
     allow_headers=["*"],
@@ -21,6 +23,10 @@ model = AutoModelForSequenceClassification.from_pretrained(model_name)
 
 class TextData(BaseModel):
     text: str
+
+@app.options("/analyze")
+async def preflight_handler(request: Request):
+    return JSONResponse(content={}, status_code=200)
 
 @app.post("/analyze")
 async def analyze_sentiment(data: TextData):
