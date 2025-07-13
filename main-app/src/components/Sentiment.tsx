@@ -8,7 +8,6 @@ export default function Sentiment({ text }: { text: string }) {
     useEffect(() => {
         const analyze = async () => {
             try {
-                console.log('API URL:', process.env.NEXT_PUBLIC_API_BASE);
                 const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

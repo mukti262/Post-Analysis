@@ -1,22 +1,28 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from fastapi.requests import Request
 
 app = FastAPI()
 
+# Update to match Vercel domain
+origins = [
+    "https://post-analysis-beta.vercel.app",  # your deployed frontend
+    "http://localhost:3000",                  # for local development
+]
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://post-analysis-beta.vercel.app"],  # set to ["http://localhost:3000"] for Next.js
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"], 
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Load multilingual sentiment model
+# Sentiment model loading
 model_name = "nlptown/bert-base-multilingual-uncased-sentiment"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForSequenceClassification.from_pretrained(model_name)
@@ -24,17 +30,14 @@ model = AutoModelForSequenceClassification.from_pretrained(model_name)
 class TextData(BaseModel):
     text: str
 
-@app.options("/analyze")
-async def preflight_handler(request: Request):
-    return JSONResponse(content={}, status_code=200)
-
+# POST endpoint for sentiment analysis
 @app.post("/analyze")
 async def analyze_sentiment(data: TextData):
     inputs = tokenizer(data.text, return_tensors="pt", truncation=True)
     with torch.no_grad():
         outputs = model(**inputs)
         scores = torch.nn.functional.softmax(outputs.logits, dim=1)
-        predicted_class = torch.argmax(scores).item() + 1 
+        predicted_class = torch.argmax(scores).item() + 1  # Sentiment score: 1–5
 
     return {
         "sentiment_score": predicted_class,
