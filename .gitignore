@@ -1,0 +1,36 @@
+# === NEXT.JS (main-app) ===
+main-app/node_modules/
+main-app/.next/
+main-app/out/
+main-app/build/
+main-app/.env*
+main-app/.vercel/
+main-app/.pnp
+main-app/pnpm-lock.yaml
+main-app/yarn.lock
+main-app/next-env.d.ts
+main-app/*.tsbuildinfo
+
+# === PYTHON (ml-api) ===
+ml-api/venv/
+ml-api/__pycache__/
+ml-api/*.py[cod]
+ml-api/*.egg-info/
+ml-api/.env
+
+# === GENERAL ===
+*.log
+*.pem
+.DS_Store
+*.tsbuildinfo
+*.sqlite
+.pnpm-debug.log*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === COVERAGE ===
+coverage/
+
+# === VSCODE ===
+.vscode/
